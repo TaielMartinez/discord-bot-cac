@@ -28,7 +28,7 @@ doc.useServiceAccountAuth(creds, function (err) {
 
 client.on('message', msg => {
 
-	mensajeConsola(msg.member.user.tag, msg.content);
+	mensajeConsola(msg.content, msg.member.user.tag);
 
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
 
