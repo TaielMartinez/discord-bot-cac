@@ -6,7 +6,8 @@ client.login("NTQ3OTU4NjU3NDE0MDcwMjc1.D0-V-A.i1KiB8_Qvvjm1Iva0QZ23tdNT1I");
 var GoogleSpreadsheet = require('google-spreadsheet');
 var creds = require('./client_secret.json');
 
-var rowes;
+var pregunta;
+var respuesta;
 
 var doc = new GoogleSpreadsheet('1XVJb2TxkEAhM2jH-t8NMjV1NNas7cQQcJW7soVpGPP0');
 
@@ -15,23 +16,43 @@ doc.useServiceAccountAuth(creds, function (err) {
 
 	doc.getRows(1, function (err, rows) {
 
-		rowes=rows;
+		pregunta=rows;
+
+	});
+
+	doc.getRows(2, function (err, rows) {
+
+		respuesta=rows;
 
 	});
 });
 
 
-client.on('message', msg => {	
-		
+client.on('message', msg => {
+
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
 
-		for (i = 0; i < rowes.length; i+=4) {
+		console.log(msg.content)
 
-			if (msg.content.includes(rowes[i].leer)){
+		var comprobar = buscarPalabra(msg.content);
 
-				msg.reply(rowes[i+2].leer);
-			}
+		if (comprobar != undefined){
+
+			msg.reply(comprobar);
+
 		}
 	};
 });
-  
+
+
+function buscarPalabra (mensaje){
+
+	for (i = 0; i < pregunta.length; i++) {
+
+		if (mensaje.includes(pregunta[i].leer)){
+
+			return(pregunta[i].leer);
+				
+		}
+	}
+}
