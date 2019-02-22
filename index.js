@@ -6,23 +6,21 @@ client.login("NTQ3OTU4NjU3NDE0MDcwMjc1.D0-V-A.i1KiB8_Qvvjm1Iva0QZ23tdNT1I");
 var GoogleSpreadsheet = require('google-spreadsheet');
 var creds = require('./client_secret.json');
 
-var pregunta;
+var rowes;
 var respuesta;
 
 var doc = new GoogleSpreadsheet('1XVJb2TxkEAhM2jH-t8NMjV1NNas7cQQcJW7soVpGPP0');
+
+
+console.log("---- corriendo server ----");
 
 
 doc.useServiceAccountAuth(creds, function (err) {
 
 	doc.getRows(1, function (err, rows) {
 
-		pregunta=rows;
-
-	});
-
-	doc.getRows(2, function (err, rows) {
-
-		respuesta=rows;
+		rowes=rows;
+		console.log("---- google sheet conectado ----");
 
 	});
 });
@@ -30,9 +28,9 @@ doc.useServiceAccountAuth(creds, function (err) {
 
 client.on('message', msg => {
 
-	if(msg.member.user.tag != "Bot de Prueba#6012"){
+	mensajeConsola(msg.member.user.tag, msg.content);
 
-		console.log(msg.content)
+	if(msg.member.user.tag != "Bot de Prueba#6012"){
 
 		var comprobar = buscarPalabra(msg.content);
 
@@ -41,18 +39,31 @@ client.on('message', msg => {
 			msg.reply(comprobar);
 
 		}
-	};
+	}
 });
 
 
 function buscarPalabra (mensaje){
 
-	for (i = 0; i < pregunta.length; i++) {
+	for (i = 0; i < rowes.length; i++) {
 
-		if (mensaje.includes(pregunta[i].leer)){
+		if (mensaje.includes(rowes[i].leer)){
 
-			return(pregunta[i].leer);
+			return(rowes[i++].leer);
 				
 		}
 	}
-}
+};
+
+
+function mensajeConsola(usuario, mensaje){
+
+	console.log(" ___________________________________");
+	if(usuario != "Bot de Prueba#6012"){console.log("----------- mensaje recibido -------")
+	}else{console.log("------------ bot mensaje -----------");}
+	console.log(" ");
+	if(usuario != "Bot de Prueba#6012"){console.log("   usuario: "+ mensaje)};
+	console.log("   mensaje: "+ usuario);
+	console.log(" ___________________________________");
+	
+};
