@@ -1,13 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-client.login("NTQ3OTU4NjU3NDE0MDcwMjc1.D0-V-A.i1KiB8_Qvvjm1Iva0QZ23tdNT1I");
+client.login("NTQ3OTU4NjU3NDE0MDcwMjc1.D1GZDw.Y6G6WCLMS3kz3YjdgwpQoIYD9Q0");
 
 var GoogleSpreadsheet = require('google-spreadsheet');
 var creds = require('./client_secret.json');
 
 var rowes;
-var respuesta;
 
 var doc = new GoogleSpreadsheet('1XVJb2TxkEAhM2jH-t8NMjV1NNas7cQQcJW7soVpGPP0');
 
@@ -49,7 +48,7 @@ function buscarPalabra (mensaje){
 
 		if (mensaje.includes(rowes[i].leer)){
 
-			return(rowes[i++].leer);
+			return(rowes[i+1].leer);
 				
 		}
 	}
