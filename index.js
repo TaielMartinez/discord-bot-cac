@@ -46,9 +46,9 @@ function buscarPalabra (mensaje){
 
 	for (i = 0; i < rowes.length; i++) {
 
-		if (mensaje.includes(rowes[i].leer)){
+		if (mensaje.includes(rowes[i].pregunta)){
 
-			return(rowes[i+1].leer);
+			return(rowes[i].respuesta);
 				
 		}
 	}
