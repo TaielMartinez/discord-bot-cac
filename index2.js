@@ -38,14 +38,12 @@ var cell = cells[0];
 
 // cells have a value, numericValue, and formula
 // updating `value` is "smart" and generally handles things for you
-cell.value = 123;
-cell.value = '=A1+B2'
+cell.value = "asd";
 await cell.save(); //async
 
 // bulk updates make it easy to update many cells at once
-cells[0].value = 1;
+cells[0].value = "qweqwe";
 cells[1].value = 2;
-cells[2].formula = '=A1+B1';
 await sheet.bulkUpdateCells(cells); //async
 
 
