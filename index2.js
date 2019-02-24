@@ -25,17 +25,11 @@ doc.getRows(1, function (err, rows) {
 	
 if(cambiar == true)
 		{
-			/*rows = rowes;
-			for (i = 0; i < rowes.length; i++) {
-
-		    rows[i].save(); // this is async
-	}
-  rows.push(rowes[0]);
-  rows[5].save()
- */
-  
+			rows = rowes;
+			
+		    rows[rows.length - 1].save(); // this is async
+  accessSpreadsheet()
 		}
-		// console.log(rows);
 		
 		rowes=rows;
 		console.log("---- Google Sheet conectado ----");
@@ -136,23 +130,22 @@ if(mensaje[i] != " ")
 
 }		
 	}
-	
+	if(pregunta != "" && respuesta != "" && pregunta != "undefined" && respuesta != "undefined")
+	{
 	console.log("La pregunta es: " + pregunta + " Y la respuesta es: " + respuesta);
 	
-	rowes[rowes.length + 1] = rowes[rowes.length];
+	rowes[rowes.length] = rowes[rowes.length - 1];
+	rowes[rowes.length - 1].pregunta = pregunta;
+	rowes[rowes.length - 1].respuesta = respuesta
 		
 			accessSpreadsheet(true)
 	return ("Aprendido");
 	}
-	
+	}
 	
 
 	
 }
-
-
-
-
 
 
 
