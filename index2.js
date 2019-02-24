@@ -9,7 +9,10 @@ const url_token = require('./url-token.json');
 
 client.login(url_token.discord_token);
 
-async function accessSpreadsheet() {
+
+var rowes;
+
+async function accessSpreadsheet(cambiar) {
   const doc = new GoogleSpreadsheet(url_token.SPREADSHEET_ID)
   await promisify(doc.useServiceAccountAuth)(credentials)
   const info = await promisify(doc.getInfo)()
@@ -17,37 +20,172 @@ async function accessSpreadsheet() {
   const sheet = info.worksheets[0]
   console.log(`sheet 1: ` + sheet.title + ` ` + sheet.rowCount + `x` + sheet.colCount)
 
+doc.getRows(1, function (err, rows) {
+	
+	
+if(cambiar == true)
+		{
+			/*rows = rowes;
+			for (i = 0; i < rowes.length; i++) {
 
-  const cells = await promisify(sheet.getCells)({
+		    rows[i].save(); // this is async
+	}
+  rows.push(rowes[0]);
+  rows[5].save()
+ */
+  
+		}
+		// console.log(rows);
+		
+		rowes=rows;
+		console.log("---- Google Sheet conectado ----");
 
-    'min-row': 1,
-    'max-row': 5,
-    'min-col': 1,
-    'max-col': 2,
-    'return-empty': true,
+		
+		
+		 
 
-  })
+	});
+	
+	
+	
+	
 
-  for (const cell of cells) {
-
-    console.log(`${cell.row},${cell.col}: ${cell.value}`)
-
-  }
-
-  var cell = cells[0];
-
-  // cells have a value, numericValue, and formula
-  // updating `value` is "smart" and generally handles things for you
-  cell.value = 123;
-  cell.value = '=A1+B2'
-  await cell.save(); //async
-
-  // bulk updates make it easy to update many cells at once
-  cells[0].value = 1;
-  cells[1].value = 2;
-  cells[2].formula = '=A1+B1';
-  await sheet.bulkUpdateCells(cells); //async
+  
 
 }
-
 accessSpreadsheet()
+
+
+client.on('message', msg => {
+
+
+
+	mensajeConsola(msg.member.user.tag, msg.content);
+
+	if(msg.member.user.tag != "Bot de Prueba#6012"){
+
+		var comprobar = buscarPalabra(msg.content);
+
+		if (comprobar != undefined){
+
+			msg.reply(comprobar);
+
+		}
+	}
+
+});
+
+
+function agregarRespuesta(mensaje)
+{
+	
+	var chequeo = "";
+	
+		for (i = 0; i < 9; i++) {
+
+		chequeo = chequeo + mensaje[i];
+	}
+	
+	if(chequeo == "/aprender")
+	{
+		
+		
+		
+		
+		
+		var pregunta = ""
+		var respuesta = ""
+		var preguntaLista = false
+		for (i = 9; i < mensaje.length; i++) {
+
+
+if(mensaje[i] == "/")
+{
+preguntaLista = true;	
+i++;
+}
+
+if(preguntaLista == false)
+{
+		if(mensaje[i] != " ")
+		{
+			
+			
+			pregunta = pregunta + mensaje[i]
+		}
+		else if (pregunta != "")
+		{
+			
+			pregunta = pregunta + mensaje[i]
+			
+		}
+}
+else{
+
+
+if(mensaje[i] != " ")
+		{			
+			respuesta = respuesta + mensaje[i]
+		}
+		else if (respuesta != "")
+		{
+			
+			respuesta = respuesta + mensaje[i]
+			
+		}
+
+}		
+	}
+	
+	console.log("La pregunta es: " + pregunta + " Y la respuesta es: " + respuesta);
+	
+	rowes[rowes.length + 1] = rowes[rowes.length];
+		
+			accessSpreadsheet(true)
+	return ("Aprendido");
+	}
+	
+	
+
+	
+}
+
+
+
+
+
+
+
+function buscarPalabra (mensaje){
+	
+	if(mensaje.includes("/aprender"))
+	{			
+		return(agregarRespuesta(mensaje));
+		
+		
+	}
+	else{
+
+	for (i = 0; i < rowes.length; i++) {
+
+		if (mensaje.includes(rowes[i].pregunta)){
+
+			return(rowes[i].respuesta);
+
+		}
+	}
+	}
+};
+
+
+function mensajeConsola(usuario, mensaje){
+
+	console.log(" ___________________________________");
+	if(usuario != "Bot de Prueba#6012"){console.log("----------- mensaje recibido -------")
+	}else{console.log("------------ bot mensaje -----------");}
+	console.log(" ");
+	if(usuario != "Bot de Prueba#6012"){console.log("   usuario: "+ usuario)};
+	console.log("   mensaje: "+ mensaje);
+	console.log(" ___________________________________");
+
+}; 
