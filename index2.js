@@ -1,3 +1,7 @@
+console.log("-------------------------------------");
+console.log("----      Servidor Iniciado      ----");
+console.log("-------------------------------------");
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
@@ -11,48 +15,51 @@ client.login(url_token.discord_token);
 
 
 var rowes;
+var inicio = true;
 
-async function accessSpreadsheet(cambiar) {
+
+async function accessSpreadsheet(cambiar){
   const doc = new GoogleSpreadsheet(url_token.SPREADSHEET_ID)
   await promisify(doc.useServiceAccountAuth)(credentials)
   const info = await promisify(doc.getInfo)()
-  console.log(`Loaded doc: ` + info.title + ` by ` + info.author.email)
-  const sheet = info.worksheets[0]
-  console.log(`sheet 1: ` + sheet.title + ` ` + sheet.rowCount + `x` + sheet.colCount)
+	const sheet = info.worksheets[0]
 
-doc.getRows(1, function (err, rows) {
+	if(inicio){
+
+		console.log('----      Documento Cargado      ----')
+		console.log('----                             ----')
+		console.log(`---- Nombre: ` + info.title)
+		console.log(`---- Cuenta: ` + info.author.email)
+		console.log(`---- Hoja 1: ` + sheet.title)
+		console.log(`---- Dimenciones ` + sheet.rowCount + `x` + sheet.colCount)
+		console.log("-------------------------------------")
+		inicio = false;
+
+	}
 	
-	
-if(cambiar == true)
-		{
+
+	doc.getRows(1, function (err, rows) {
+		
+		if(cambiar == true){
+
 			rows = rowes;
-			
-		    rows[rows.length - 1].save(); // this is async
-  accessSpreadsheet()
+
+			rows[rows.length - 1].save()
+
+			accessSpreadsheet()
+
 		}
-		
+
 		rowes=rows;
-		console.log("---- Google Sheet conectado ----");
 
-		
-		
-		 
-
-	});
-	
-	
-	
-	
-
-  
-
+	})
 }
+
+
 accessSpreadsheet()
 
 
 client.on('message', msg => {
-
-
 
 	mensajeConsola(msg.member.user.tag, msg.content);
 
@@ -66,119 +73,165 @@ client.on('message', msg => {
 
 		}
 	}
+})
 
-});
 
-
-function agregarRespuesta(mensaje)
-{
+function buscarPalabra(mensaje){
 	
-	var chequeo = "";
+	if(mensaje.includes("/aprender")){
 	
-		for (i = 0; i < 9; i++) {
+		return(agregarRespuesta(mensaje));		
 
-		chequeo = chequeo + mensaje[i];
 	}
-	
-	if(chequeo == "/aprender")
-	{
-		
-		
-		
-		
-		
-		var pregunta = ""
-		var respuesta = ""
-		var preguntaLista = false
-		for (i = 9; i < mensaje.length; i++) {
 
-
-if(mensaje[i] == "/")
-{
-preguntaLista = true;	
-i++;
-}
-
-if(preguntaLista == false)
-{
-		if(mensaje[i] != " ")
-		{
-			
-			
-			pregunta = pregunta + mensaje[i]
-		}
-		else if (pregunta != "")
-		{
-			
-			pregunta = pregunta + mensaje[i]
-			
-		}
-}
-else{
-
-
-if(mensaje[i] != " ")
-		{			
-			respuesta = respuesta + mensaje[i]
-		}
-		else if (respuesta != "")
-		{
-			
-			respuesta = respuesta + mensaje[i]
-			
-		}
-
-}		
-	}
-	if(pregunta != "" && respuesta != "" && pregunta != "undefined" && respuesta != "undefined")
-	{
-	console.log("La pregunta es: " + pregunta + " Y la respuesta es: " + respuesta);
-	
-	rowes[rowes.length] = rowes[rowes.length - 1];
-	rowes[rowes.length - 1].pregunta = pregunta;
-	rowes[rowes.length - 1].respuesta = respuesta
-		
-			accessSpreadsheet(true)
-	return ("Aprendido");
-	}
-	}
-	
-
-	
-}
-
-
-
-function buscarPalabra (mensaje){
-	
-	if(mensaje.includes("/aprender"))
-	{			
-		return(agregarRespuesta(mensaje));
-		
-		
-	}
 	else{
 
-	for (i = 0; i < rowes.length; i++) {
+		for (i = 0; i < rowes.length; i++) {
 
-		if (mensaje.includes(rowes[i].pregunta)){
+			if (mensaje == rowes[i].pregunta){
 
-			return(rowes[i].respuesta);
+				return(rowes[i].respuesta);
 
+			}
+		}
+
+		for (i = 0; i < rowes.length; i++) {
+
+			if (mensaje.includes(rowes[i].pregunta)){
+
+				return(rowes[i].respuesta);
+
+			}
 		}
 	}
-	}
-};
+}
 
+
+function agregarRespuesta(mensaje){
+
+	if(palabraIgual(mensaje,"/aprender")){
+
+		var aprenderTexto = separarConBarras(mensaje); // [0] pregunta - [1] respuesta
+
+		if(aprenderTexto[0] != "" && aprenderTexto[1] != "" && aprenderTexto[0] != "undefined" && aprenderTexto[1] != "undefined"){
+			
+			rowes[rowes.length] = rowes[rowes.length - 1];
+			rowes[rowes.length - 1].pregunta = aprenderTexto[0];
+			rowes[rowes.length - 1].respuesta = aprenderTexto[1];
+	
+			accessSpreadsheet(true)
+
+			mensajePreguntaNueva(aprenderTexto)
+			return("Respuesta aprendida")
+
+		}
+
+		return("Escriba /aprender <pregunta> / <respuesta>")
+		
+	}
+
+	return("El comando /aprender sirve para enseñarme respuestas. Escribe /aprender para mas informacion")
+	
+}
+
+// Comprueba que palabara sea la primera palabra del texto
+function palabraIgual(texto, palabra){
+
+	var chequeo = "";
+
+	for (i = 0; i < palabra.length; i++){
+
+		chequeo = chequeo + texto[i];
+
+	}
+
+	if(chequeo == palabra){
+
+		return(true)
+		
+	} else{
+
+		return(false)
+		
+	}
+}
+
+function separarConBarras(mensaje){
+
+	var aprenderTexto = ["","",false]
+
+	for (i = 9; i < mensaje.length; i++) {
+
+		if(mensaje[i] == "/"){
+
+			aprenderTexto[2] = true;	
+		i++;
+
+		}
+
+		if(aprenderTexto[2] == false){
+
+			if(mensaje[i] != " "){
+					
+				aprenderTexto[0] = aprenderTexto[0] + mensaje[i]
+
+			}
+
+			else if(aprenderTexto[0] != ""){
+					
+				aprenderTexto[0] = aprenderTexto[0] + mensaje[i]
+					
+			}
+		}
+
+		else{
+
+			if(mensaje[i] != " "){			
+
+				aprenderTexto[1] = aprenderTexto[1] + mensaje[i]
+
+			}
+
+			else if(aprenderTexto[1] != ""){
+						
+				aprenderTexto[1] = aprenderTexto[1] + mensaje[i]
+						
+			}
+		}
+	}
+
+	return(aprenderTexto)
+
+}
 
 function mensajeConsola(usuario, mensaje){
 
-	console.log(" ___________________________________");
-	if(usuario != "Bot de Prueba#6012"){console.log("----------- mensaje recibido -------")
-	}else{console.log("------------ bot mensaje -----------");}
-	console.log(" ");
-	if(usuario != "Bot de Prueba#6012"){console.log("   usuario: "+ usuario)};
-	console.log("   mensaje: "+ mensaje);
-	console.log(" ___________________________________");
 
-}; 
+	if(usuario != "Bot de Prueba#6012"){
+	
+		console.log("                                             _____________________________________")
+		console.log("                                             ----------- Mensaje Recibido -------")
+		console.log(" ")
+		console.log("                                                Usuario: "+ usuario)
+		console.log(" ")
+		console.log("                                                Mensaje: "+ mensaje)
+		console.log("                                             _____________________________________")
+
+	}else{
+
+		console.log("                                                                                          ------------ Bot Mensaje -----------")
+		console.log(" ")
+		console.log("                                                                                             Mensaje: "+ mensaje)
+		console.log("                                                                                          _____________________________________")
+	}
+
+}
+
+function mensajePreguntaNueva(aprenderTexto){
+	console.log("-------------------------------------")
+			console.log("----      Pregunta Guardada      ----")
+			console.log("----                             ----")
+			console.log("---- Pregunta: " + aprenderTexto[0])
+			console.log("---- Respuesta: " + aprenderTexto[1])
+			console.log("-------------------------------------")
+}
