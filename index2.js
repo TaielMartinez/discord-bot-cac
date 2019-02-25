@@ -31,7 +31,7 @@ async function accessSpreadsheet(cambiar){
 		console.log(`---- Nombre: ` + info.title)
 		console.log(`---- Cuenta: ` + info.author.email)
 		console.log(`---- Hoja 1: ` + sheet.title)
-		console.log(`---- Dimenciones ` + sheet.rowCount + `x` + sheet.colCount)
+		console.log(`---- Dimensiones ` + sheet.rowCount + `x` + sheet.colCount)
 		console.log("-------------------------------------")
 		inicio = false;
 
