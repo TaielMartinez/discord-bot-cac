@@ -8,8 +8,8 @@ const client = new Discord.Client();
 const GoogleSpreadsheet = require('google-spreadsheet')
 const { promisify } = require('util')
 
-const credentials = require(`./service-account.json`);
-const url_token = require('./url-token.json');
+const credentials = require(`./no-borrar/service-account.json`);
+const url_token = require('./no-borrar/url-token.json');
 
 client.login(url_token.discord_token);
 
@@ -31,7 +31,7 @@ async function accessSpreadsheet(cambiar){
 		console.log(`---- Nombre: ` + info.title)
 		console.log(`---- Cuenta: ` + info.author.email)
 		console.log(`---- Hoja 1: ` + sheet.title)
-		console.log(`---- Dimenciones ` + sheet.rowCount + `x` + sheet.colCount)
+		console.log(`---- Dimensiones: ` + sheet.rowCount + `x` + sheet.colCount)
 		console.log("-------------------------------------")
 		inicio = false;
 
