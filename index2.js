@@ -8,8 +8,21 @@ const client = new Discord.Client();
 const GoogleSpreadsheet = require('google-spreadsheet')
 const { promisify } = require('util')
 
-const credentials = require(`./no-borrar/service-account.json`);
-const url_token = require('./no-borrar/url-token.json');
+var credentials;
+var url_token;
+
+if(process.env.token != undefined){
+
+	credentials = JSON.parse(process.env.service-account);
+	url_token = JSON.parse(process.env.url-token);
+	
+} else{
+
+	credentials = require(`./no-borrar/service-account.json`);
+	url_token = require('./no-borrar/url-token.json');
+	
+}
+
 
 client.login(url_token.discord_token);
 
