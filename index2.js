@@ -1,40 +1,40 @@
-console.log("-------------------------------------");
-console.log("----      Servidor Iniciado      ----");
-console.log("-------------------------------------");
 
-var http = require('http');
+var http = require('http')
 http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
-}).listen(process.env.PORT || 5000);
+	res.writeHead(200, {'Content-Type': 'text/plain'})
+	res.end('Hello World\n')
+	console.log("-------------------------------------")
+	console.log("----    Servidor Web Iniciado    ----")
+	console.log("-------------------------------------")
+}).listen(process.env.PORT || 5000)
 
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const Discord = require('discord.js')
+const client = new Discord.Client()
 
 const GoogleSpreadsheet = require('google-spreadsheet')
 const { promisify } = require('util')
 
-var credentials;
-var url_token;
+var credentials
+var url_token
 
 if(process.env.service_account != undefined){
 
-	credentials = JSON.parse(process.env.service_account);
-	url_token = JSON.parse(process.env.url_token);
+	credentials = JSON.parse(process.env.service_account)
+	url_token = JSON.parse(process.env.url_token)
 	
 } else{
 
-	credentials = require(`./no-borrar/service-account.json`);
-	url_token = require('./no-borrar/url-token.json');
+	credentials = require(`./no-borrar/service-account.json`)
+	url_token = require('./no-borrar/url-token.json')
 
 }
 
 
-client.login(url_token.discord_token);
+client.login(url_token.discord_token)
 
 
-var rowes;
-var inicio = true;
+var rowes
+var inicio = true
 
 
 async function accessSpreadsheet(cambiar){
@@ -52,7 +52,7 @@ async function accessSpreadsheet(cambiar){
 		console.log(`---- Hoja 1: ` + sheet.title)
 		console.log(`---- Dimensiones: ` + sheet.rowCount + `x` + sheet.colCount)
 		console.log("-------------------------------------")
-		inicio = false;
+		inicio = false
 
 	}
 	
@@ -61,7 +61,7 @@ async function accessSpreadsheet(cambiar){
 		
 		if(cambiar == true){
 
-			rows = rowes;
+			rows = rowes
 
 			rows[rows.length - 1].save()
 
@@ -80,15 +80,15 @@ accessSpreadsheet()
 
 client.on('message', msg => {
 
-	mensajeConsola(msg.member.user.tag, msg.content);
+	mensajeConsola(msg.member.user.tag, msg.content)
 
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
 
-		var comprobar = buscarPalabra(msg.content);
+		var comprobar = buscarPalabra(msg.content)
 
 		if (comprobar != undefined){
 
-			msg.reply(comprobar);
+			msg.reply(comprobar)
 
 		}
 	}
@@ -99,7 +99,7 @@ function buscarPalabra(mensaje){
 	
 	if(mensaje.includes("/aprender")){
 	
-		return(agregarRespuesta(mensaje));		
+		return(agregarRespuesta(mensaje))	
 
 	}
 
@@ -109,7 +109,7 @@ function buscarPalabra(mensaje){
 
 			if (mensaje == rowes[i].pregunta){
 
-				return(rowes[i].respuesta);
+				return(rowes[i].respuesta)
 
 			}
 		}
@@ -118,7 +118,7 @@ function buscarPalabra(mensaje){
 
 			if (mensaje.includes(rowes[i].pregunta)){
 
-				return(rowes[i].respuesta);
+				return(rowes[i].respuesta)
 
 			}
 		}
@@ -130,14 +130,14 @@ function agregarRespuesta(mensaje){
 
 	if(palabraIgual(mensaje,"/aprender")){
 
-		var aprenderTexto = separarConBarras(mensaje); // [0] pregunta - [1] respuesta
+		var aprenderTexto = separarConBarras(mensaje) // [0] pregunta - [1] respuesta
 
 		if(aprenderTexto[0] != "" && aprenderTexto[1] != "" && aprenderTexto[0] != "undefined" && aprenderTexto[1] != "undefined"){
-			
-			rowes[rowes.length] = rowes[rowes.length - 1];
-			rowes[rowes.length - 1].pregunta = aprenderTexto[0];
-			rowes[rowes.length - 1].respuesta = aprenderTexto[1];
-	
+
+			rowes[rowes.length] = rowes[rowes.length - 1]
+			rowes[rowes.length - 1].pregunta = aprenderTexto[0]
+			rowes[rowes.length - 1].respuesta = aprenderTexto[1]
+
 			accessSpreadsheet(true)
 
 			mensajePreguntaNueva(aprenderTexto)
@@ -156,11 +156,11 @@ function agregarRespuesta(mensaje){
 // Comprueba que palabara sea la primera palabra del texto
 function palabraIgual(texto, palabra){
 
-	var chequeo = "";
+	var chequeo = ""
 
 	for (i = 0; i < palabra.length; i++){
 
-		chequeo = chequeo + texto[i];
+		chequeo = chequeo + texto[i]
 
 	}
 
@@ -183,8 +183,8 @@ function separarConBarras(mensaje){
 
 		if(mensaje[i] == "/"){
 
-			aprenderTexto[2] = true;	
-		i++;
+			aprenderTexto[2] = true
+		i++
 
 		}
 
