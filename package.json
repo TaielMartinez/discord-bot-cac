@@ -1,0 +1,19 @@
+{
+  "name": "cac bot",
+  "version": "1.0.0",
+  "description": "puto el que lee",
+  "main": "index2.js",
+  "scripts": {
+    "start": "node index2.js"
+  },
+  "keywords": [],
+  "author": "Taiel Martinez y Lucas Cazas",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "google-spreadsheet": "^2.0.7",
+    "spreadsheet-to-json": "^1.3.1"
+  }
+}
