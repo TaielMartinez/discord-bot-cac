@@ -13,8 +13,8 @@ var url_token;
 
 //if(process.env.token != undefined){
 
-	credentials = JSON.parse(process.env.service-account);
-	url_token = JSON.parse(process.env.url-token);
+	credentials = JSON.parse(process.env.service_account);
+	url_token = JSON.parse(process.env.url_token);
 	
 //} else{
 
