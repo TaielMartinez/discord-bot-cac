@@ -11,17 +11,17 @@ const { promisify } = require('util')
 var credentials;
 var url_token;
 
-if(process.env.token != undefined){
+//if(process.env.token != undefined){
 
 	credentials = JSON.parse(process.env.service-account);
 	url_token = JSON.parse(process.env.url-token);
 	
-} else{
+//} else{
 
-	credentials = require(`./no-borrar/service-account.json`);
-	url_token = require('./no-borrar/url-token.json');
-	
-}
+	//credentials = require(`./no-borrar/service-account.json`);
+	//url_token = require('./no-borrar/url-token.json');
+
+//}
 
 
 client.login(url_token.discord_token);
