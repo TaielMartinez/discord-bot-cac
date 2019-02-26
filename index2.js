@@ -2,7 +2,7 @@
 var http = require('http')
 http.createServer(function (req, res) {
 	res.writeHead(200, {'Content-Type': 'text/plain'})
-	res.end('Hello World\n')
+	res.end('')
 	console.log("-------------------------------------")
 	console.log("----    Servidor Web Iniciado    ----")
 	console.log("-------------------------------------")
@@ -33,49 +33,84 @@ if(process.env.service_account != undefined){
 client.login(url_token.discord_token)
 
 
-var rowes
+var rowes_respuestas
 var inicio = true
+var rowes_traductor
 
 
-async function accessSpreadsheet(cambiar){
-  const doc = new GoogleSpreadsheet(url_token.SPREADSHEET_ID)
-  await promisify(doc.useServiceAccountAuth)(credentials)
-  const info = await promisify(doc.getInfo)()
-	const sheet = info.worksheets[0]
+async function accessSpreadsheet(cambiar, actualizar){
+	const doc_respuestas = new GoogleSpreadsheet(url_token.SPREADSHEET_ID_RESPUESTAS)
+	const doc_traductor = new GoogleSpreadsheet(url_token.SPREADSHEET_ID_TRADUCTOR)
+	await promisify(doc_respuestas.useServiceAccountAuth)(credentials)
+	await promisify(doc_traductor.useServiceAccountAuth)(credentials)
+	const info_respuestas = await promisify(doc_respuestas.getInfo)()
+	const sheet_respuestas = info_respuestas.worksheets[0]
+	const info_traductor = await promisify(doc_respuestas.getInfo)()
+	const sheet_traductor = info_respuestas.worksheets[0]
 
 	if(inicio){
 
-		console.log('----      Documento Cargado      ----')
-		console.log('----                             ----')
-		console.log(`---- Nombre: ` + info.title)
-		console.log(`---- Cuenta: ` + info.author.email)
-		console.log(`---- Hoja 1: ` + sheet.title)
-		console.log(`---- Dimensiones: ` + sheet.rowCount + `x` + sheet.colCount)
 		console.log("-------------------------------------")
+		console.log('----     Documento Respuestas    ----')
+		console.log('----                             ----')
+		console.log(`---- Nombre: ` + info_respuestas.title)
+		console.log(`---- Cuenta: ` + info_respuestas.author.email)
+		console.log(`---- Hoja 1: ` + sheet_respuestas.title)
+		console.log(`---- Dimensiones: ` + sheet_respuestas.rowCount + `x` + sheet_respuestas.colCount)
+		console.log("-------------------------------------")
+
+		console.log('----     Documento Traductor     ----')
+		console.log('----                             ----')
+		console.log(`---- Nombre: ` + info_traductor.title)
+		console.log(`---- Cuenta: ` + info_traductor.author.email)
+		console.log(`---- Hoja 1: ` + sheet_traductor.title)
+		console.log(`---- Dimensiones: ` + sheet_traductor.rowCount + `x` + sheet_traductor.colCount)
+		console.log("-------------------------------------")
+
 		inicio = false
 
 	}
 	
+	if(actualizar == "respuestas"){
 
-	doc.getRows(1, function (err, rows) {
-		
-		if(cambiar == true){
+		console.log("-------------------------------------")
+		console.log("------ Respuestas Actualizado -------")
+		console.log("-------------------------------------")
 
-			rows = rowes
+		doc_respuestas.getRows(1, function (err, rows) {
 
-			rows[rows.length - 1].save()
 
-			accessSpreadsheet()
 
+			if(cambiar == true){
+
+				rows = rowes_respuestas
+
+				rows[rows.length - 1].save()
+
+				accessSpreadsheet(false, "respuestas")
+
+			}
+
+			rowes_respuestas=rows;
+
+		})
+	}else if(actualizar == "traductor"){
+		var mensajeTraducir = separarConBarras(rowes_traductor, 3) // [0] idioma - [1] texto
+
+		console.log(mensajeTraducir)
+
+		doc_traductor.getRows(1, function (err, rows_t) {
+
+			rows_t = mensajeTraducir[1]
+			console.log(mensajeTraducir[1])
+
+			rows_t[rows_t.length - 1].save()
 		}
-
-		rowes=rows;
-
-	})
+	)}
 }
 
 
-accessSpreadsheet()
+accessSpreadsheet(false, "respuestas")
 
 
 client.on('message', msg => {
@@ -101,24 +136,28 @@ function buscarPalabra(mensaje){
 	
 		return(agregarRespuesta(mensaje))	
 
+	}else if(mensaje.includes("/tr")){
+
+		return(traducirMensaje(mensaje))
+		
 	}
 
 	else{
 
-		for (i = 0; i < rowes.length; i++) {
+		for (i = 0; i < rowes_respuestas.length; i++) {
 
-			if (mensaje == rowes[i].pregunta){
+			if (mensaje == rowes_respuestas[i].pregunta){
 
-				return(rowes[i].respuesta)
+				return(rowes_respuestas[i].respuesta)
 
 			}
 		}
 
-		for (i = 0; i < rowes.length; i++) {
+		for (i = 0; i < rowes_respuestas.length; i++) {
 
-			if (mensaje.includes(rowes[i].pregunta)){
+			if (mensaje.includes(rowes_respuestas[i].pregunta)){
 
-				return(rowes[i].respuesta)
+				return(rowes_respuestas[i].respuesta)
 
 			}
 		}
@@ -130,15 +169,15 @@ function agregarRespuesta(mensaje){
 
 	if(palabraIgual(mensaje,"/aprender")){
 
-		var aprenderTexto = separarConBarras(mensaje) // [0] pregunta - [1] respuesta
+		var aprenderTexto = separarConBarras(mensaje, 9) // [0] pregunta - [1] respuesta
 
 		if(aprenderTexto[0] != "" && aprenderTexto[1] != "" && aprenderTexto[0] != "undefined" && aprenderTexto[1] != "undefined"){
 
-			rowes[rowes.length] = rowes[rowes.length - 1]
-			rowes[rowes.length - 1].pregunta = aprenderTexto[0]
-			rowes[rowes.length - 1].respuesta = aprenderTexto[1]
+			rowes_respuestas[rowes_respuestas.length] = rowes_respuestas[rowes_respuestas.length - 1]
+			rowes_respuestas[rowes_respuestas.length - 1].pregunta = aprenderTexto[0]
+			rowes_respuestas[rowes_respuestas.length - 1].respuesta = aprenderTexto[1]
 
-			accessSpreadsheet(true)
+			accessSpreadsheet(true, "respuestas")
 
 			mensajePreguntaNueva(aprenderTexto)
 			return("Respuesta aprendida")
@@ -175,11 +214,11 @@ function palabraIgual(texto, palabra){
 	}
 }
 
-function separarConBarras(mensaje){
+function separarConBarras(mensaje, cantidadLetrasComando){
 
 	var aprenderTexto = ["","",false]
 
-	for (i = 9; i < mensaje.length; i++) {
+	for (i = cantidadLetrasComando; i < mensaje.length; i++) {
 
 		if(mensaje[i] == "/"){
 
@@ -222,6 +261,45 @@ function separarConBarras(mensaje){
 	return(aprenderTexto)
 
 }
+
+
+
+
+function traducirMensaje(mensaje){
+
+	if(palabraIgual(mensaje,"/tr")){
+
+		rowes_traductor = mensaje;
+
+		accessSpreadsheet(false, "traductor")
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function mensajeConsola(usuario, mensaje){
 
