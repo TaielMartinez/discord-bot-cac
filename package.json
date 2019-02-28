@@ -4,7 +4,7 @@
   "description": "puto el que lee",
   "main": "index2.js",
   "scripts": {
-    "start": "node index2.js"
+    "start": "node index3.js"
   },
   "keywords": [],
   "author": "Taiel Martinez y Lucas Cazas",
@@ -14,7 +14,6 @@
     "discord.js": "^11.4.2",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "google-spreadsheet": "^2.0.7",
-    "spreadsheet-to-json": "^1.3.1"
+    "google-spreadsheet": "^2.0.7"
   }
 }
