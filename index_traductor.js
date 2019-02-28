@@ -105,17 +105,8 @@ async function accessSpreadsheet(cambiar, actualizar){
 
 		doc_traductor.getRows(1, function (err, rows_t) {
 
-		var textoVariables = separarConBarras(mensajeAtraducir, 3) // [0] idioma - [1] texto
-
-		rows_t = rowes_traductor
-
-		console.log(doc_traductor)
-		console.log(rows_t)
-
-		rowes_traductor[rowes_traductor.length] = rowes_traductor[rowes_traductor.length - 1]
-		rowes_traductor[rowes_traductor.length - 1].pregunta = textoVariables[0]
-		rowes_traductor[rowes_traductor.length - 1].respuesta = textoVariables[1]		
-
+		
+rows_t = rowes_traductor
 		rows_t[1].save()
 
 		})
@@ -132,7 +123,7 @@ client.on('message', msg => {
 
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
 
-		var comprobar = buscarPalabra(msg.content)
+		var comprobar = dividirPorBarras(msg.content)
 
 		if (comprobar != undefined){
 
@@ -143,15 +134,130 @@ client.on('message', msg => {
 })
 
 
+function dividirPorBarras(texto)
+{
+	var arrayDeTextos = [""]
+	var actualPos = 0
+
+
+	for (i = 0; i < texto.length; i++) {
+		
+
+
+if(texto[i] == "/")
+{
+	arrayDeTextos[actualPos]  =  limpiarEspacios(arrayDeTextos[actualPos])
+	actualPos++
+	arrayDeTextos[actualPos] = ""
+	
+}
+else{
+	arrayDeTextos[actualPos] += texto[i]
+}
+		}
+		
+arrayDeTextos[actualPos]  =  limpiarEspacios(arrayDeTextos[actualPos])
+		console.log(arrayDeTextos)
+	
+}
+
+
+function limpiarEspacios(mensaje2)
+{
+	var textoLimpio = ""
+	var hayCaracter	= false
+	
+	for (c = 0; c < mensaje2.length; c++) {		
+		
+		
+		
+		if(mensaje2[c] == " ")
+		{	
+			if(hayCaracter == true)
+			{
+				
+			textoLimpio += mensaje2[c]
+			}
+		}
+		else{
+			hayCaracter = true
+			textoLimpio += mensaje2[c]
+		}
+		
+	}
+	
+	
+	var textoLimpio2 = ""
+	var hayCaracter2 = false
+	
+	
+		for (c = textoLimpio.length - 1; c > -1; c--) {		
+		
+		
+		
+		
+		if(textoLimpio[c] == " ")
+		{	
+			if(hayCaracter2 == true)
+			{
+				
+			textoLimpio2 += textoLimpio[c]
+			}
+		}
+		else{
+			hayCaracter2 = true
+			textoLimpio2 += textoLimpio[c]
+		}
+		
+	}
+	
+	
+	
+	return reverseString(textoLimpio2)
+	
+}
+
+
+function reverseString(str) {
+    return str.split("").reverse().join("");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function buscarPalabra(mensaje){
 	
-	if(mensaje.includes("/aprender")){
+	if(palabraIgual(mensaje,"/aprender")){
 	
-		return(agregarRespuesta(mensaje))	
-
-	}else if(mensaje.includes("/tr")){
-
-		return(traducirMensaje(mensaje))
+		
+		
+		
+		
+		
+		
+		
 		
 	}
 
@@ -277,12 +383,22 @@ function separarConBarras(mensaje, cantidadLetrasComando){
 
 
 
-
 function traducirMensaje(mensaje){
 
 	if(palabraIgual(mensaje,"/tr")){
 
 		mensajeAtraducir = mensaje
+
+
+		var textoVariables = separarConBarras(mensajeAtraducir, 3) // [0] idioma - [1] texto
+
+		console.log(textoVariables)
+
+		rowes_traductor[rowes_traductor.length] = rowes_traductor[rowes_traductor.length - 1]
+		rowes_traductor[rowes_traductor.length - 1].pregunta = textoVariables[0]
+		rowes_traductor[rowes_traductor.length - 1].respuesta = textoVariables[1]
+		
+		
 
 		accessSpreadsheet(false, "traductor")
 
@@ -290,28 +406,7 @@ function traducirMensaje(mensaje){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//=================================================================================================================================================================
 
 
 function mensajeConsola(usuario, mensaje){
