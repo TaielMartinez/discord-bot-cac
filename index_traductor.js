@@ -141,14 +141,14 @@ rows_t[1].pregunta = mensajeAtraducir
 
 
 
-//accessSpreadsheet(false, "respuestas")
+accessSpreadsheet(false, "respuestas")
 
 
 
 
 
 
-client.on('message', msg => {
+/*client.on('message', msg => {
 	mensajeConsola(msg.member.user.tag, msg.content)
 
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
@@ -160,7 +160,7 @@ client.on('message', msg => {
 	
 	}
 })
-
+*/
 
 
 
@@ -171,9 +171,31 @@ client.on('message', msg => {
 	mensajeConsola(msg.member.user.tag, msg.content)
 
 	if(msg.member.user.tag != "Bot de Prueba#6012"){
+var comprobar
 
-		var comprobar = dividirPorBarras(msg.content)
-
+		if(msg.content[0] == "/")
+		{
+			
+			var textoSeparado = separarComando(msg.content)
+			var comandoText = textoSeparado[0]
+			if (comandoText == "tr" )
+			{
+				
+				mensajeAtraducir = textoSeparado[1]
+	mensajeAresponder = msg
+	accessSpreadsheet(false, "traductor")
+				
+				
+			}
+			else if (comandoText == "aprender" )
+			{
+				comprobar = "PARA APRENDER"
+			}	
+		}
+		else
+		{
+		comprobar =  buscarPalabra(msg.content)
+		}
 		if (comprobar != undefined){
 
 			msg.reply(comprobar)
@@ -274,6 +296,31 @@ function reverseString(str) {
 
 
 
+function separarComando(texto)
+{	
+	
+
+var chequeo = ["",""]
+var posicion = 0
+
+	for (i = 1; i < texto.length; i++){  // i = 1 borra la primera barra
+
+		
+		
+		if(texto[i] == " " && posicion == 0)
+		{
+			posicion= 1
+		}
+		else
+		{
+			chequeo[posicion] = chequeo[posicion] + texto[i]
+		}
+		
+
+	}
+	return(chequeo)
+	
+}
 
 
 
@@ -298,19 +345,13 @@ function reverseString(str) {
 
 function buscarPalabra(mensaje){
 	
-	if(palabraIgual(mensaje,"/aprender")){
-	
+	/*if(palabraIgual(mensaje,"/aprender")){	
 		
-		
-		
-		
-		
-		
-		
+		//APRENDER LA RESPUESTA
 		
 	}
 
-	else{
+	else*/{
 
 		for (i = 0; i < rowes_respuestas.length; i++) {
 
@@ -332,7 +373,7 @@ function buscarPalabra(mensaje){
 	}
 }
 
-
+/*
 function agregarRespuesta(mensaje){
 
 	if(palabraIgual(mensaje,"/aprender")){
@@ -431,28 +472,8 @@ function separarConBarras(mensaje, cantidadLetrasComando){
 }
 
 
+*/
 
-function traducirMensaje(mensaje){
-
-	if(palabraIgual(mensaje,"/tr")){
-
-		mensajeAtraducir = mensaje
-
-
-		var textoVariables = separarConBarras(mensajeAtraducir, 3) // [0] idioma - [1] texto
-
-		console.log(textoVariables)
-
-		rowes_traductor[rowes_traductor.length] = rowes_traductor[rowes_traductor.length - 1]
-		rowes_traductor[rowes_traductor.length - 1].pregunta = textoVariables[0]
-		rowes_traductor[rowes_traductor.length - 1].respuesta = textoVariables[1]
-		
-		
-
-		accessSpreadsheet(false, "traductor")
-
-	}
-}
 
 
 //=================================================================================================================================================================
