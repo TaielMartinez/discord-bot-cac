@@ -37,7 +37,8 @@ var rowes_respuestas
 var inicio = true
 var rowes_traductor
 var mensajeAtraducir
-
+var rows_while
+var mensajeAresponder
 
 async function accessSpreadsheet(cambiar, actualizar){
 	const doc_respuestas = new GoogleSpreadsheet(url_token.SPREADSHEET_ID_RESPUESTAS)
@@ -96,25 +97,73 @@ async function accessSpreadsheet(cambiar, actualizar){
 		})
 	}
 
+	if(actualizar == "traductorLECTURA"){		
+		
+			doc_traductor.getRows(1, function (err, rows_t) {
+rows_while = rows_t
+	
+		
+		if(rows_while[1].respuesta != '=if(A3="","",GOOGLETRANSLATE(A3,C3,D3))')
+		{
+				mensajeAresponder.reply(rows_while[1].respuesta)
+				
+		}
+		else{
+			accessSpreadsheet(false, "traductorLECTURA")
+		}
+		})	
+	}
+	
+	
+	
+	if(actualizar == "traductor"){	
+		
 
-	if(actualizar == "traductor"){
+
 
 		console.log("-------------------------------------")
 		console.log("------ Traduccion Actualizado -------")
 		console.log("-------------------------------------")
-
-		doc_traductor.getRows(1, function (err, rows_t) {
-
 		
-rows_t = rowes_traductor
+		
+		
+			doc_traductor.getRows(1, function (err, rows_t) {
+rows_while = rows_t
+rows_t[1].respuesta = '=if(A3="","",GOOGLETRANSLATE(A3,C3,D3))';
+rows_t[1].pregunta = mensajeAtraducir
 		rows_t[1].save()
-
-		})
+		accessSpreadsheet(false, "traductorLECTURA")
+		
+		})	
 	}
 }
 
 
-accessSpreadsheet(false, "respuestas")
+
+
+//accessSpreadsheet(false, "respuestas")
+
+
+
+
+
+
+client.on('message', msg => {
+	mensajeConsola(msg.member.user.tag, msg.content)
+
+	if(msg.member.user.tag != "Bot de Prueba#6012"){
+
+	mensajeAtraducir = msg.content
+	mensajeAresponder = msg
+	accessSpreadsheet(false, "traductor")
+	
+	
+	}
+})
+
+
+
+
 
 
 client.on('message', msg => {
