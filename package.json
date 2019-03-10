@@ -17,6 +17,8 @@
     "express": "^4.16.4",
     "google-spreadsheet": "^2.0.7",
     "google-translate": "^2.2.0",
-    "riot-api-nodejs": "^2.1.0"
+    "riot-api-nodejs": "^2.1.0",
+    "riot-games-api-nodejs": "^1.0.7",
+    "riot-lol-api": "^4.2.18"
   }
 }
