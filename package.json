@@ -16,6 +16,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "google-spreadsheet": "^2.0.7",
-    "google-translate": "^2.2.0"
+    "google-translate": "^2.2.0",
+    "riot-api-nodejs": "^2.1.0"
   }
 }
