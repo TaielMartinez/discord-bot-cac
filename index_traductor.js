@@ -107,7 +107,15 @@ rows_while = rows_t
 		
 		if(rows_while[1].respuesta != '=if(A3="","",GOOGLETRANSLATE(A3,C3,D3))')
 		{
+			if(rows_while[1].respuesta == "#VALUE!")
+			{
+					mensajeAresponder.reply("Idioma no detectado")
+			}
+			else
+			{
 				mensajeAresponder.reply(rows_while[1].respuesta)
+			}
+				
 				
 		}
 		else{
@@ -335,9 +343,6 @@ var posicion = 0
 }
 
 
-
-
-
 function agregarRespuesta(mensaje){
 
 
@@ -361,15 +366,6 @@ function agregarRespuesta(mensaje){
 		}
 
 }
-
-
-
-
-
-
-
-
-
 
 
 
