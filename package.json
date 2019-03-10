@@ -1,0 +1,21 @@
+{
+  "name": "discordbotcac",
+  "version": "1.0.0",
+  "description": "puto el que lee",
+  "main": "index2.js",
+  "scripts": {
+    "start": "node index_traductor.js"
+  },
+  "keywords": [],
+  "author": "Taiel Martinez y Lucas Cazas",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "discord.js": "^11.4.2",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "google-spreadsheet": "^2.0.7",
+    "riot-api-nodejs": "^2.1.0",
+    "riot-games-api-nodejs": "^1.0.7"
+  }
+}
