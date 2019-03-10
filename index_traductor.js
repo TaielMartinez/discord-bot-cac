@@ -39,6 +39,8 @@ var rowes_traductor
 var mensajeAtraducir
 var rows_while
 var mensajeAresponder
+var idiomaObjetivo
+var idiomaPrevio
 
 async function accessSpreadsheet(cambiar, actualizar){
 	const doc_respuestas = new GoogleSpreadsheet(url_token.SPREADSHEET_ID_RESPUESTAS)
@@ -131,6 +133,8 @@ rows_while = rows_t
 rows_while = rows_t
 rows_t[1].respuesta = '=if(A3="","",GOOGLETRANSLATE(A3,C3,D3))';
 rows_t[1].pregunta = mensajeAtraducir
+rows_t[1].idioma_b = idiomaObjetivo
+rows_t[1].idioma_a = idiomaPrevio
 		rows_t[1].save()
 		accessSpreadsheet(false, "traductorLECTURA")
 		
@@ -138,30 +142,7 @@ rows_t[1].pregunta = mensajeAtraducir
 	}
 }
 
-
-
-
 accessSpreadsheet(false, "respuestas")
-
-
-
-
-
-
-/*client.on('message', msg => {
-	mensajeConsola(msg.member.user.tag, msg.content)
-
-	if(msg.member.user.tag != "Bot de Prueba#6012"){
-
-	mensajeAtraducir = msg.content
-	mensajeAresponder = msg
-	accessSpreadsheet(false, "traductor")
-	
-	
-	}
-})
-*/
-
 
 
 
@@ -177,19 +158,49 @@ var comprobar
 		{
 			
 			var textoSeparado = separarComando(msg.content)
-			var comandoText = textoSeparado[0]
-			if (comandoText == "tr" )
+			var comando = textoSeparado[0]
+			if (comando == "tr" )
 			{
-				
-				mensajeAtraducir = textoSeparado[1]
-	mensajeAresponder = msg
+				idiomaPrevio = "es"
+				idiomaObjetivo = "en"
+				var textoDividido = dividirPorBarras( textoSeparado[1])
+				mensajeAresponder = msg
+				if (textoDividido.length == 1)
+				{
+					mensajeAtraducir = textoSeparado[1]
+					accessSpreadsheet(false, "traductor")
+	
+				}
+				if (textoDividido.length == 2)
+				{
+					mensajeAtraducir = textoDividido[0]
+					
+	idiomaObjetivo = textoDividido[1]
+	idiomaPrevio = "auto"
 	accessSpreadsheet(false, "traductor")
+				}
+				if (textoDividido.length == 3)
+				{
+					mensajeAtraducir = textoDividido[0]
+	idiomaObjetivo = textoDividido[2]
+	idiomaPrevio = textoDividido[1]
+	accessSpreadsheet(false, "traductor")
+				}
+				if (textoDividido.length > 3)
+				{
+					comprobar = "Escriba /tr help"
+				}
+				
+				
+				
+				
 				
 				
 			}
-			else if (comandoText == "aprender" )
+			else if (comando == "aprender" )
 			{
-				comprobar = "PARA APRENDER"
+				
+				comprobar = agregarRespuesta(textoSeparado[1])
 			}	
 		}
 		else
@@ -228,7 +239,8 @@ else{
 		}
 		
 arrayDeTextos[actualPos]  =  limpiarEspacios(arrayDeTextos[actualPos])
-		console.log(arrayDeTextos)
+	
+		return(arrayDeTextos)
 	
 }
 
@@ -326,11 +338,29 @@ var posicion = 0
 
 
 
+function agregarRespuesta(mensaje){
 
 
+		var aprenderTexto = dividirPorBarras(mensaje) // [0] pregunta - [1] respuesta
+		
+		if(aprenderTexto.length == 1 || aprenderTexto[0] == "" || aprenderTexto[1] == "" || aprenderTexto.length > 2)
+		{
+			return("Escriba /aprender <pregunta> / <respuesta>")
+		}
+		if(aprenderTexto[0] != "" && aprenderTexto[1] != "" && aprenderTexto[0] != "undefined" && aprenderTexto[1] != "undefined"){
 
+			rowes_respuestas[rowes_respuestas.length] = rowes_respuestas[rowes_respuestas.length - 1]
+			rowes_respuestas[rowes_respuestas.length - 1].pregunta = aprenderTexto[0]
+			rowes_respuestas[rowes_respuestas.length - 1].respuesta = aprenderTexto[1]
 
+			accessSpreadsheet(true, "respuestas")
 
+			mensajePreguntaNueva(aprenderTexto)
+			return("Respuesta aprendida")
+
+		}
+
+}
 
 
 
@@ -345,13 +375,7 @@ var posicion = 0
 
 function buscarPalabra(mensaje){
 	
-	/*if(palabraIgual(mensaje,"/aprender")){	
-		
-		//APRENDER LA RESPUESTA
-		
-	}
 
-	else*/{
 
 		for (i = 0; i < rowes_respuestas.length; i++) {
 
@@ -368,38 +392,12 @@ function buscarPalabra(mensaje){
 
 				return(rowes_respuestas[i].respuesta)
 
-			}
 		}
 	}
 }
 
 /*
-function agregarRespuesta(mensaje){
 
-	if(palabraIgual(mensaje,"/aprender")){
-
-		var aprenderTexto = separarConBarras(mensaje, 9) // [0] pregunta - [1] respuesta
-
-		if(aprenderTexto[0] != "" && aprenderTexto[1] != "" && aprenderTexto[0] != "undefined" && aprenderTexto[1] != "undefined"){
-
-			rowes_respuestas[rowes_respuestas.length] = rowes_respuestas[rowes_respuestas.length - 1]
-			rowes_respuestas[rowes_respuestas.length - 1].pregunta = aprenderTexto[0]
-			rowes_respuestas[rowes_respuestas.length - 1].respuesta = aprenderTexto[1]
-
-			accessSpreadsheet(true, "respuestas")
-
-			mensajePreguntaNueva(aprenderTexto)
-			return("Respuesta aprendida")
-
-		}
-
-		return("Escriba /aprender <pregunta> / <respuesta>")
-		
-	}
-
-	return("El comando /aprender sirve para enseñarme respuestas. Escribe /aprender para mas informacion")
-	
-}
 
 // Comprueba que palabara sea la primera palabra del texto
 function palabraIgual(texto, palabra){
@@ -423,53 +421,6 @@ function palabraIgual(texto, palabra){
 	}
 }
 
-function separarConBarras(mensaje, cantidadLetrasComando){
-
-	var aprenderTexto = ["","",false]
-
-	for (i = cantidadLetrasComando; i < mensaje.length; i++) {
-
-		if(mensaje[i] == "/"){
-
-			aprenderTexto[2] = true
-		i++
-
-		}
-
-		if(aprenderTexto[2] == false){
-
-			if(mensaje[i] != " "){
-					
-				aprenderTexto[0] = aprenderTexto[0] + mensaje[i]
-
-			}
-
-			else if(aprenderTexto[0] != ""){
-					
-				aprenderTexto[0] = aprenderTexto[0] + mensaje[i]
-					
-			}
-		}
-
-		else{
-
-			if(mensaje[i] != " "){			
-
-				aprenderTexto[1] = aprenderTexto[1] + mensaje[i]
-
-			}
-
-			else if(aprenderTexto[1] != ""){
-						
-				aprenderTexto[1] = aprenderTexto[1] + mensaje[i]
-						
-			}
-		}
-	}
-
-	return(aprenderTexto)
-
-}
 
 
 */
